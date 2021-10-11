@@ -1,0 +1,179 @@
+﻿<mah:MetroWindow x:Class="D2RSO.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:D2RSO"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance local:MainWindow}"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
+        Title="D2R Skill Overlay" Height="450" Width="430">
+	<mah:MetroWindow.RightWindowCommands>
+		<mah:WindowCommands>
+			<Button Content="Get help" Click="SupportButton_OnClick"/>
+		</mah:WindowCommands>
+	</mah:MetroWindow.RightWindowCommands>
+	<Window.Resources>
+		<ContextMenu x:Key="TrayMenu">
+			<ContextMenu.Items>
+				<MenuItem Header="Open/Hide window" Click="OpenWindowMenuItem_OnClick"/>
+				<Separator/>
+				<MenuItem Header="Exit" Click="ExitMenuItem_OnClick"/>
+			</ContextMenu.Items>
+		</ContextMenu>
+	</Window.Resources>
+
+	<Grid>
+        <Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<tb:TaskbarIcon x:Name="TrayIcon"
+		                Visibility="Visible"
+		                ToolTipText="D2R Skill Overlay"
+		                IconSource="/Images/Logo.ico"
+		                ContextMenu="{StaticResource TrayMenu}"
+		                MenuActivation="LeftOrRightClick"
+		                PopupActivation="DoubleClick"/>
+
+
+		<StackPanel Orientation="Horizontal">
+			<Button Margin="5" Height="35" Width="35" Background="{StaticResource MahApps.Brushes.Window.Background}"
+			        Padding="3" Click="AddSkillButton_OnClick" IsEnabled="{Binding IsNotPlaying, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
+			        ToolTip="Add new skill">
+				<Path Data="M19,6H22V8H19V11H17V8H14V6H17V3H19V6M17,17V14H19V19H3V6H11V8H5V17H17Z" Fill="{StaticResource MahApps.Brushes.IdealForeground}"
+				      Stretch="Uniform"/>
+			</Button>
+			<Button Margin="5" Height="35" Width="35" Background="{StaticResource MahApps.Brushes.Window.Background}"
+			        Padding="3" Click="EyeButton_OnClick" IsEnabled="{Binding IsNotPlaying, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
+			        ToolTip="Show/Hide overlay preview">
+			<Path Fill="{StaticResource MahApps.Brushes.IdealForeground}"
+				      Stretch="Uniform">
+					<Path.Style>
+						<Style TargetType="{x:Type Path}">
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding IsCounterPreviewVisible}" Value="True">
+									<Setter Property="Data" Value="M2,5.27L3.28,4L20,20.72L18.73,22L15.65,18.92C14.5,19.3 13.28,19.5 12,19.5C7,19.5 2.73,16.39 1,12C1.69,10.24 2.79,8.69 4.19,7.46L2,5.27M12,9A3,3 0 0,1 15,12C15,12.35 14.94,12.69 14.83,13L11,9.17C11.31,9.06 11.65,9 12,9M12,4.5C17,4.5 21.27,7.61 23,12C22.18,14.08 20.79,15.88 19,17.19L17.58,15.76C18.94,14.82 20.06,13.54 20.82,12C19.17,8.64 15.76,6.5 12,6.5C10.91,6.5 9.84,6.68 8.84,7L7.3,5.47C8.74,4.85 10.33,4.5 12,4.5M3.18,12C4.83,15.36 8.24,17.5 12,17.5C12.69,17.5 13.37,17.43 14,17.29L11.72,15C10.29,14.85 9.15,13.71 9,12.28L5.6,8.87C4.61,9.72 3.78,10.78 3.18,12Z" />
+								</DataTrigger>
+								<DataTrigger Binding="{Binding IsCounterPreviewVisible}" Value="False">
+									<Setter Property="Data" Value="M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9M12,4.5C17,4.5 21.27,7.61 23,12C21.27,16.39 17,19.5 12,19.5C7,19.5 2.73,16.39 1,12C2.73,7.61 7,4.5 12,4.5M3.18,12C4.83,15.36 8.24,17.5 12,17.5C15.76,17.5 19.17,15.36 20.82,12C19.17,8.64 15.76,6.5 12,6.5C8.24,6.5 4.83,8.64 3.18,12Z" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</Path.Style>
+				</Path>
+			</Button>
+
+			<Button Margin="5" Height="35" Width="35" Background="{StaticResource MahApps.Brushes.Window.Background}"
+			        Padding="3" Command="{Binding PlayCommand}"
+			        ToolTip="Start tracking">
+				<Path Fill="{StaticResource MahApps.Brushes.IdealForeground}"
+				      Stretch="Uniform">
+					<Path.Style>
+						<Style TargetType="{x:Type Path}">
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding IsPlaying}" Value="True">
+									<Setter Property="Data" Value="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M9,9H15V15H9" />
+								</DataTrigger>
+								<DataTrigger Binding="{Binding IsPlaying}" Value="False">
+									<Setter Property="Data" Value="M10,16.5V7.5L16,12M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</Path.Style>
+				</Path>
+			</Button>
+			<StackPanel Orientation="Vertical">
+				<Label HorizontalAlignment="Center" Content="Tracker Size"/>
+				<Slider Minimum="5" Maximum="19" Value="10" Interval="1" Margin="3" ValueChanged="Scaler_OnValueChanged" Width="130" x:Name="TrackerSlider"/>
+			</StackPanel>
+		</StackPanel>
+
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+			<Button Margin="5" Height="35" Width="35" Background="{StaticResource MahApps.Brushes.Window.Background}"
+			        Padding="3" Click="ExitButtonBase_OnClick" IsEnabled="{Binding IsNotPlaying, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
+			        ToolTip="Exit the app">
+				<Path Data="M19,3H5C3.89,3 3,3.89 3,5V9H5V5H19V19H5V15H3V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M10.08,15.58L11.5,17L16.5,12L11.5,7L10.08,8.41L12.67,11H3V13H12.67L10.08,15.58Z" Fill="{StaticResource MahApps.Brushes.IdealForeground}"
+				      Stretch="Uniform"/>
+			</Button>
+		</StackPanel>
+
+		<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+			<ItemsControl  Margin="5" ItemsSource="{Binding Source={x:Static local:App.Settings}, Path=SkillItems , UpdateSourceTrigger=PropertyChanged, Mode=TwoWay }" Background="Transparent"
+		               IsEnabled="{Binding IsNotPlaying, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+
+							<CheckBox IsChecked="{Binding IsEnabled}" Grid.Column="0" Margin="5" Padding="0"/>
+
+							<ComboBox ItemsSource="{Binding Source={x:Static local:App.Data}, Path=Skillicons}" Grid.Column="1" Width="85" Height="60" Margin="5" Padding="0"
+						                    SelectedValue="{Binding IconFileName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectedValuePath="Key"
+						                    IsEditable="False" >
+								<ComboBox.ItemTemplate>
+									<DataTemplate>
+										<Image Margin="5" Width="50" Height="50"  Stretch="Uniform" Source="{Binding Converter={StaticResource IconToImageConverter}}"/>
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+							</ComboBox>
+
+							<StackPanel Orientation="Horizontal"  Grid.Column="2">
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+									</Grid.RowDefinitions>
+									<Label Content="Duration" Margin="5"/>
+									<mah:NumericUpDown Grid.Row="1" Value="{Binding TimeLength, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Minimum="0" NumericInputMode="Decimal" HideUpDownButtons="True"/>
+								</Grid>
+
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+									</Grid.RowDefinitions>
+									<Label Content="Select Key" Margin="5"/>
+									<ComboBox Grid.Row="1" SelectedItem="{Binding SelectKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding Source={x:Static local:App.Data}, Path=AvailableKeys}" />
+								</Grid>
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto"/>
+										<RowDefinition Height="Auto"/>
+									</Grid.RowDefinitions>
+									<Label Content="Skill Key" Margin="5"/>
+									<ComboBox Grid.Row="1" SelectedItem="{Binding SkillKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding Source={x:Static local:App.Data}, Path=AvailableKeys}" />
+								</Grid>
+
+							</StackPanel>
+
+							<Button Grid.Column="3" Width="30" Height="30" Padding="0" Margin="5" Click="RemSkillButton_OnClick" CommandParameter="{Binding}">
+								<Path Data="M19,3H16.3H7.7H5A2,2 0 0,0 3,5V7.7V16.4V19A2,2 0 0,0 5,21H7.7H16.4H19A2,2 0 0,0 21,19V16.3V7.7V5A2,2 0 0,0 19,3M15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4L13.4,12L17,15.6L15.6,17Z" Fill="{StaticResource MahApps.Brushes.IdealForeground}"
+							      Stretch="Uniform"/>
+							</Button>
+						</Grid>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+
+		<Border Grid.Row="2" BorderBrush="{StaticResource MahApps.Brushes.AccentBase}" BorderThickness="0,1,0,0">
+			<StackPanel Orientation="Vertical">
+				<TextBlock HorizontalAlignment="Center" Padding="0">Open-source project by <Hyperlink NavigateUri="https://github.com/panthernet" Click="Hyperlink_OnClick">panthernet software</Hyperlink></TextBlock>
+				<Label Padding="1,0,1,1" HorizontalAlignment="Center" Content="Diablo II: Resurrected is a registred trademark of © BLIZZARD ENTERTAINMENT, INC." FontSize="8"/>
+			</StackPanel>
+		</Border>
+
+	</Grid>
+</mah:MetroWindow>
