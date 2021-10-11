@@ -82,7 +82,7 @@ namespace D2RSO
                 var usedItems = new List<SkillDataItem>();
                 // Now you can access both, the key and virtual code
                 var loggedKey = sender == null ? (e.KeyboardData.Flags == 0 ? "MOUSE1" : "MOUSE2") : e.KeyboardData.Key.ToString();
-                var result = App.Settings.SkillItems.Where(a => a.IsEnabled && a.SkillKey.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
+                var result = App.Settings.SkillItems.Where(a => a.IsEnabled && a.SkillKey != null && a.SkillKey.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
                 if (result.Any())
                 {
                     //signal skill key pressed
@@ -97,7 +97,7 @@ namespace D2RSO
                     }
                 }
 
-                result = App.Settings.SkillItems.Where(a => a.IsEnabled && a.SelectKey.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
+                result = App.Settings.SkillItems.Where(a => a.IsEnabled && a.SelectKey != null && a.SelectKey.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
                 if (result.Any())
                 {
                     //select key pressed
