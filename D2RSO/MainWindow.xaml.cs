@@ -120,6 +120,7 @@ namespace D2RSO
             _globalInputHook = null;
             CounterWindow?.Close();
             CounterWindow = null;
+            IsCounterPreviewVisible = false;
         }
 
         #endregion
