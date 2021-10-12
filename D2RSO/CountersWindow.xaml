@@ -35,7 +35,6 @@
 
 	<Border Name="Border" Style="{StaticResource BorderConditionalStyle}"
 	        LayoutTransform="{StaticResource windowScaleTransform}">
-		
 		<Grid>
             <Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
@@ -63,35 +62,34 @@
 			</StackPanel>
 			<!--  -->
 
-			<ListBox Margin="3" Grid.Row="1" ItemsSource="{Binding SkillTrackerItems, UpdateSourceTrigger=PropertyChanged}"  Opacity=".8"
+			<ItemsControl Margin="3" Grid.Row="1" ItemsSource="{Binding SkillTrackerItems, UpdateSourceTrigger=PropertyChanged}"  Opacity=".8"
 			         Visibility="{Binding IsNotPreview, Converter={StaticResource BooleanToVisibilityConverter}}"
-                     Background="Transparent" BorderBrush="Transparent">
-	            <ListBox.ItemsPanel>
+			         Background="Transparent" BorderBrush="Transparent">
+				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
-						<StackPanel Orientation="Horizontal" Background="Transparent"/>
+						<StackPanel Orientation="{Binding Source={x:Static local:App.Settings}, Path=IsTrackerVertical, Converter={StaticResource BoolToOrientationConverter}}" Background="Transparent"/>
 					</ItemsPanelTemplate>
-				</ListBox.ItemsPanel>
-				<ListBox.ItemContainerStyle>
-					<Style TargetType="{x:Type ListBoxItem}">
-						<Setter Property="Background" Value="Transparent"></Setter>
-					</Style>
-				</ListBox.ItemContainerStyle>
-	            <ListBox.ItemTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
 					<DataTemplate DataType="{x:Type local:TrackerItem}">
 						<Grid>
 							<StackPanel Orientation="Vertical">
-								<Image Margin="5,0" Width="50" Height="50"  Stretch="Uniform" Source="{Binding Data.IconFileName, Converter={StaticResource IconToImageConverter}}"
-								       VerticalAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False"/>
+								<Grid>
+									<Image Margin="5,0" Width="50" Height="50"  Stretch="Uniform" Source="{Binding Data.IconFileName, Converter={StaticResource IconToImageConverter}}"
+									       VerticalAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False"/>
+									<Border Background="Red" Opacity=".5" Visibility="{Binding IsRedOverlayVisible, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="5"/>
+								</Grid>
 								<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
 									<Border Background="{StaticResource MahApps.Brushes.Window.Background}" Opacity=".4"/>
 									<Label Content="{Binding CurrentTimeValue, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Padding="0"
-									       FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+									       FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"
+									       Visibility="{Binding Source={x:Static local:App.Settings}, Path=ShowDigitsInTracker, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 								</Grid>
 							</StackPanel>
 						</Grid>
 					</DataTemplate>
-				</ListBox.ItemTemplate>
-            </ListBox>
+				</ItemsControl.ItemTemplate>
+            </ItemsControl>
 		</Grid>
 	</Border>
 </Window>

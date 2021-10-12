@@ -1,2 +1,5 @@
-﻿V1.0.0
+﻿V1.0.1
++ Added options window with some tracker settings
+
+V1.0.0
 + Initial release

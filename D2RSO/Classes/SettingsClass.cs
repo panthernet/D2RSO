@@ -12,6 +12,22 @@ namespace D2RSO.Classes
         private string _filePath;
         private double _formScaleX;
         private double _formScaleY;
+        private bool _isTrackerInsertToLeft;
+        private bool _isTrackerVertical;
+        private bool _showDigitsInTracker;
+        private int _redTrackerOverlaySec;
+
+        public bool ShowDigitsInTracker
+        {
+            get => _showDigitsInTracker;
+            set { _showDigitsInTracker = value; OnPropertyChanged(); }
+        }
+
+        public bool IsTrackerVertical
+        {
+            get => _isTrackerVertical;
+            set { _isTrackerVertical = value; OnPropertyChanged(); }
+        }
 
         /// <summary>
         /// Skills data collection
@@ -43,6 +59,21 @@ namespace D2RSO.Classes
         {
             get => _formScaleY;
             set { _formScaleY = value; OnPropertyChanged(); }
+        }
+
+        public bool IsTrackerInsertToLeft
+        {
+            get => _isTrackerInsertToLeft;
+            set { _isTrackerInsertToLeft = value; OnPropertyChanged(); }
+        }
+
+        [JsonIgnore]
+        public bool IsRedTrackerOverlayEnabled => _redTrackerOverlaySec > 0;
+
+        public int RedTrackerOverlaySec
+        {
+            get => _redTrackerOverlaySec;
+            set { _redTrackerOverlaySec = value; OnPropertyChanged(); OnPropertyChanged(nameof(IsRedTrackerOverlayEnabled)); }
         }
 
         /// <summary>

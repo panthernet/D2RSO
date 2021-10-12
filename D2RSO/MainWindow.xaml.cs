@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using D2RSO.Classes;
 using D2RSO.Classes.Data;
+using D2RSO.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Xaml.Behaviors.Core;
 using Button = System.Windows.Controls.Button;
@@ -51,7 +52,7 @@ namespace D2RSO
             InitializeComponent();
             DataContext = this;
 
-            Title = $"D2R Skill Overlay V1.0.0";
+            Title = $"D2R Skill Overlay V1.0.1";
 
             IsMaxRestoreButtonEnabled = false;
             IsMinButtonEnabled = true;
@@ -231,6 +232,18 @@ namespace D2RSO
         {
             var pi = new ProcessStartInfo("https://github.com/panthernet") { UseShellExecute = true };
             Process.Start(pi);
+        }
+
+        private async void OptionsButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            var dlg = new OptionsDialog();
+            var dialog = new CustomDialog(this)
+            {
+                Content = dlg
+            };
+            dlg.CloseButton.Click += async (o, args) => await this.HideMetroDialogAsync(dialog);
+
+            await this.ShowMetroDialogAsync(dialog);
         }
     }
 }

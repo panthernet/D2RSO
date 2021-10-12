@@ -85,7 +85,9 @@ namespace D2RSO
             //create new tracker
             var tr = new TrackerItem(item);
             tr.OnCompleted += RemTrackerItem;
-            SkillTrackerItems.Add(tr);
+            if(App.Settings.IsTrackerInsertToLeft)
+                SkillTrackerItems.Insert(0, tr);
+            else SkillTrackerItems.Add(tr);
         }
 
         public void SetPreview(bool isPreview)
@@ -108,6 +110,14 @@ namespace D2RSO
     {
         private double _currentTimeValue;
         private readonly Timer _timer;
+        private bool _isRedOverlayVisible;
+
+        public bool IsRedOverlayVisible
+        {
+            get => _isRedOverlayVisible;
+            set { _isRedOverlayVisible = value; OnPropertyChanged(); }
+        }
+
         public SkillDataItem Data { get; set; }
 
         public event Action<int> OnCompleted;
@@ -125,6 +135,9 @@ namespace D2RSO
             _timer = new Timer(1000) { AutoReset = true };
             _timer.Elapsed += (_, _) =>
             {
+                if(App.Settings.IsRedTrackerOverlayEnabled)
+                    IsRedOverlayVisible = (CurrentTimeValue-1) <= App.Settings.RedTrackerOverlaySec;
+
                 if (_currentTimeValue == 0)
                 {
                     Stop();

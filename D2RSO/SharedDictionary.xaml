@@ -1,6 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:d2Rso="clr-namespace:D2RSO"
-                    xmlns:classes="clr-namespace:D2RSO.Classes">
+                    xmlns:classes="clr-namespace:D2RSO.Classes"
+                    xmlns:dialog="http://metro.mahapps.com/winfx/xaml/controls">
 	<classes:IconToImageConverter x:Key="IconToImageConverter"/>
+	<classes:BoolToOrientationConverter x:Key="BoolToOrientationConverter"/>
+
 </ResourceDictionary>

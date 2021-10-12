@@ -119,10 +119,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controls\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Images\Logo.ico" />
   </ItemGroup>
 
