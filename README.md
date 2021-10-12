@@ -3,11 +3,12 @@
 This app is not a mod. It is a standalone workaround and non-intrusive solution to display Diablo 2 skill cooldowns for different skills.
 The main principe of the app is to track key and button presses on OS level and display predefined skill CDs.
 
-The main reason I've come up to this solution is the inablity to track duration of Druids Werewolf form skill which resulted in many shameful deaths. Moreover it can be used for virtually any skill wich has duration attribute. Well... You can actually use it to track any key and button combinations for any purpose you can come up with. 
+The main reason I've come up to this solution is the inablity to track duration of Druids Werewolf form skill which resulted in many shameful deaths. Moreover it can be used for virtually any skill wich has duration attribute. Well... You can actually use it to track any key and button combinations for any purpose you come up with. 
 
 ## Features
 * 100% legit as it don't read or write game memory
 * Support any Diablo2 game version
+* Can display custom images
 
 ## Logic
 * You can add as many skill trackers as you like
