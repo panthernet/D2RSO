@@ -52,13 +52,18 @@ namespace D2RSO
             InitializeComponent();
             DataContext = this;
 
-            Title = $"D2R Skill Overlay V1.0.1";
+            Title = $"D2R Skill Overlay V1.0.2";
 
             IsMaxRestoreButtonEnabled = false;
             IsMinButtonEnabled = true;
             TrackerSlider.Value = App.Settings.FormScaleX * 10;
 
             PlayCommand = new ActionCommand(PlayCommandExecuted);
+            Loaded += (sender, args) =>
+            {
+                if(App.Settings.StartTrackerOnAppRun)
+                    PlayCommandExecuted();
+            };
         }
 
         #region Input tracking

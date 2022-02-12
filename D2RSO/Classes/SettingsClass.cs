@@ -16,6 +16,13 @@ namespace D2RSO.Classes
         private bool _isTrackerVertical;
         private bool _showDigitsInTracker;
         private int _redTrackerOverlaySec;
+        private bool _startTrackerOnAppRun;
+
+        public bool StartTrackerOnAppRun
+        {
+            get => _startTrackerOnAppRun;
+            set { _startTrackerOnAppRun = value; OnPropertyChanged(); }
+        }
 
         public bool ShowDigitsInTracker
         {
