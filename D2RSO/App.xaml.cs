@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Windows;
 using ControlzEx.Theming;
 using D2RSO.Classes;
@@ -17,9 +18,19 @@ namespace D2RSO
         private string _settingsFilePath;
         private string _logsFilePath;
         private string _folderPath;
+        private static Mutex _mutex;
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            const string appName = "DRSO_APP_INSTANCE";
+            _mutex = new Mutex(true, appName, out var createdNew);
+            if (!createdNew)
+            {
+                //app is already running! Exiting the application  
+                Application.Current.Shutdown();
+                return;
+            }
+
             base.OnStartup(e);
             Current.DispatcherUnhandledException += (_, args) => Logger.Log(args.Exception);
 
