@@ -27,6 +27,7 @@ namespace D2RSO.Classes
     {
         public event EventHandler<GlobalKeyboardHookEventArgs> KeyboardPressed;
         public event Action<int> MouseButtonPressed;
+        public event Action<string> GamePadButtonPressed;
 
         // EDT: Added an optional parameter (registeredKeys) that accepts keys to restict
         // the logging mechanism.
@@ -36,6 +37,13 @@ namespace D2RSO.Classes
         /// <param name="registeredKeys">Keys that should trigger logging. Pass null for full logging.</param>
         public GlobalInputHook(Keys[] registeredKeys = null)
         {
+            _gamePad = new Gamepad();
+            _gamePad.evNewGamePadButtonInfoAcquired += (sender, button, pressed) =>
+            {
+                if (pressed)
+                    GamePadButtonPressed?.Invoke(button);
+            };
+
             RegisteredKeys = registeredKeys;
             _windowsHookHandle = IntPtr.Zero;
             _user32LibraryHandle = IntPtr.Zero;
@@ -68,6 +76,9 @@ namespace D2RSO.Classes
 
         protected virtual void Dispose(bool disposing)
         {
+            _gamePad?.Dispose();
+            _gamePad = null;
+
             if (disposing)
             {
                 // because we can unhook only in the same thread, not in garbage collector thread
@@ -215,6 +226,8 @@ namespace D2RSO.Classes
             /// Additional information associated with the message. 
             /// </summary>
             public IntPtr AdditionalInformation;
+
+            public string Code;
         }
 
         public const int WH_KEYBOARD_LL = 13;
@@ -231,32 +244,39 @@ namespace D2RSO.Classes
 
         // EDT: Replaced VkSnapshot(int) with RegisteredKeys(Keys[])
         public static Keys[] RegisteredKeys;
+        private Gamepad _gamePad;
         const int KfAltdown = 0x2000;
         public const int LlkhfAltdown = (KfAltdown >> 8);
 
         public IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
             bool fEatKeyStroke = false;
-
-            var wparamTyped = wParam.ToInt32();
-            if (Enum.IsDefined(typeof(KeyboardState), wparamTyped))
+            try
             {
-                object o = Marshal.PtrToStructure(lParam, typeof(LowLevelKeyboardInputEvent));
-                LowLevelKeyboardInputEvent p = (LowLevelKeyboardInputEvent)o;
-
-                var eventArguments = new GlobalKeyboardHookEventArgs(p, (KeyboardState)wparamTyped);
-
-                // EDT: Removed the comparison-logic from the usage-area so the user does not need to mess around with it.
-                // Either the incoming key has to be part of RegisteredKeys (see constructor on top) or RegisterdKeys
-                // has to be null for the event to get fired.
-                var key = (Keys)p.VirtualCode;
-                if (RegisteredKeys == null || RegisteredKeys.Contains(key))
+                var wparamTyped = wParam.ToInt32();
+                if (Enum.IsDefined(typeof(KeyboardState), wparamTyped))
                 {
-                    EventHandler<GlobalKeyboardHookEventArgs> handler = KeyboardPressed;
-                    handler?.Invoke(this, eventArguments);
+                    object o = Marshal.PtrToStructure(lParam, typeof(LowLevelKeyboardInputEvent));
+                    LowLevelKeyboardInputEvent p = (LowLevelKeyboardInputEvent) o;
 
-                    fEatKeyStroke = eventArguments.Handled;
+                    var eventArguments = new GlobalKeyboardHookEventArgs(p, (KeyboardState) wparamTyped);
+
+                    // EDT: Removed the comparison-logic from the usage-area so the user does not need to mess around with it.
+                    // Either the incoming key has to be part of RegisteredKeys (see constructor on top) or RegisterdKeys
+                    // has to be null for the event to get fired.
+                    var key = (Keys) p.VirtualCode;
+                    if (RegisteredKeys == null || RegisteredKeys.Contains(key))
+                    {
+                        EventHandler<GlobalKeyboardHookEventArgs> handler = KeyboardPressed;
+                        handler?.Invoke(this, eventArguments);
+
+                        fEatKeyStroke = eventArguments.Handled;
+                    }
                 }
+            }
+            catch
+            {
+                // ignore
             }
 
             return fEatKeyStroke ? (IntPtr)1 : CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);

@@ -77,6 +77,9 @@ namespace D2RSO
             _globalInputHook.MouseButtonPressed += value => OnHookKeyPressed(null,
                 new GlobalKeyboardHookEventArgs(new GlobalInputHook.LowLevelKeyboardInputEvent { Flags = value },
                     GlobalInputHook.KeyboardState.KeyDown));
+            _globalInputHook.GamePadButtonPressed += button => OnHookKeyPressed(null,
+                new GlobalKeyboardHookEventArgs(new GlobalInputHook.LowLevelKeyboardInputEvent() {Code = button},
+                    GlobalInputHook.KeyboardState.KeyDown));
 
             CreateCounterWindow(false);
         }
@@ -87,7 +90,16 @@ namespace D2RSO
             {
                 var usedItems = new List<SkillDataItem>();
                 // Now you can access both, the key and virtual code
-                var loggedKey = sender == null ? (e.KeyboardData.Flags == 0 ? "MOUSE1" : "MOUSE2") : e.KeyboardData.Key.ToString();
+                string loggedKey;
+                if (sender == null)
+                {
+                    if(!string.IsNullOrEmpty(e.KeyboardData.Code))
+                        loggedKey = e.KeyboardData.Code;
+                    else loggedKey = e.KeyboardData.Flags == 0 ? "MOUSE1" : "MOUSE2";
+                }
+                else
+                    loggedKey = e.KeyboardData.Key.ToString();
+
                 var result = App.Settings.SkillItems.Where(a => a.IsEnabled && a.SkillKey != null && a.SkillKey.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
                 if (result.Any())
                 {

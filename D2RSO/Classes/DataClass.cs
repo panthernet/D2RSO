@@ -18,7 +18,7 @@ namespace D2RSO.Classes
             "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8","MOUSE1","MOUSE2", null
         };
 
-        private const string KEYS = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,OemComma,OemTilde,OemOpenBrackets,OemCloseBrackets,OemSemicolon,OemQuotes,1,2,3,4,5,6,7,8,9,0,Add,Subtract,Escape,Enter,Return,Shift,Alt,Control,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,NumPad0,NumPad1,NumPad2,NumPad3,NumPad4,NumPad5,NumPad6,NumPad7,NumPad8,NumPad9,Tab,Back,MOUSE1,MOUSE2";
+        private const string KEYS = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,OemComma,OemTilde,OemOpenBrackets,OemCloseBrackets,OemSemicolon,OemQuotes,1,2,3,4,5,6,7,8,9,0,Add,Subtract,Escape,Enter,Return,Shift,Alt,Control,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,NumPad0,NumPad1,NumPad2,NumPad3,NumPad4,NumPad5,NumPad6,NumPad7,NumPad8,NumPad9,Tab,Back,MOUSE1,MOUSE2,Buttons0,Buttons1,Buttons2,Buttons3,Buttons4,Buttons5,Buttons6,Buttons7,Buttons8,Buttons9";
 
         /// <summary>
         /// Load all images for faster access

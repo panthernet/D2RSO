@@ -1,5 +1,6 @@
 ﻿V1.0.2
 + Added option to start tracking on app launch
++ Added experimental GamePad support
 + Limited app to one intsance
 
 V1.0.1

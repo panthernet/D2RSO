@@ -85,9 +85,12 @@ namespace D2RSO
             //create new tracker
             var tr = new TrackerItem(item);
             tr.OnCompleted += RemTrackerItem;
-            if(App.Settings.IsTrackerInsertToLeft)
-                SkillTrackerItems.Insert(0, tr);
-            else SkillTrackerItems.Add(tr);
+            this.Dispatcher.Invoke(() =>
+            {
+                if (App.Settings.IsTrackerInsertToLeft)
+                    SkillTrackerItems.Insert(0, tr);
+                else SkillTrackerItems.Add(tr);
+            });
         }
 
         public void SetPreview(bool isPreview)
