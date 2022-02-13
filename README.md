@@ -9,6 +9,8 @@ The main reason I've come up to this solution is the inablity to track duration 
 * 100% legit as it don't read or write game memory and even don't parse screen images
 * Support any Diablo2 game version
 * Can display custom images
+* Support mouse, keyboard and gamepad
+* Support different custom profiles for skill setups
 
 ## Logic
 * You can add as many skill trackers as you like
