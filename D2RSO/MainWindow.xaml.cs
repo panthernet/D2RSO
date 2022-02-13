@@ -100,7 +100,7 @@ namespace D2RSO
                 else
                     loggedKey = e.KeyboardData.Key.ToString();
 
-                var result = App.Settings.SkillItems.Where(a => a.IsEnabled && a.SkillKey != null && a.SkillKey.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
+                var result = App.Settings.SkillItems.Where(a => a.IsEnabled && a.SkillKey != null && a.SkillKey.Code.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
                 if (result.Any())
                 {
                     //signal skill key pressed

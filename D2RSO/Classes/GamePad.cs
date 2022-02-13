@@ -104,12 +104,12 @@ namespace D2RSO.Classes
 
         public void Dispose()
         {
-            timer.Stop();
+            timer?.Stop();
 
-            joystick.Unacquire();
-            directInput.Dispose();
+            joystick?.Unacquire();
+            directInput?.Dispose();
 
-            timer.Close();
+            timer?.Close();
         }
     }
 }

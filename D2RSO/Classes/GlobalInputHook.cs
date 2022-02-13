@@ -258,9 +258,8 @@ namespace D2RSO.Classes
                 {
                     object o = Marshal.PtrToStructure(lParam, typeof(LowLevelKeyboardInputEvent));
                     LowLevelKeyboardInputEvent p = (LowLevelKeyboardInputEvent) o;
-
+                    p.Code = null;
                     var eventArguments = new GlobalKeyboardHookEventArgs(p, (KeyboardState) wparamTyped);
-
                     // EDT: Removed the comparison-logic from the usage-area so the user does not need to mess around with it.
                     // Either the incoming key has to be part of RegisteredKeys (see constructor on top) or RegisterdKeys
                     // has to be null for the event to get fired.

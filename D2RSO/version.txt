@@ -2,6 +2,7 @@
 + Added option to start tracking on app launch
 + Added experimental GamePad support
 + Limited app to one intsance
++ Fixed numbers and mod key press recognition
 
 V1.0.1
 + Added options window with some tracker settings

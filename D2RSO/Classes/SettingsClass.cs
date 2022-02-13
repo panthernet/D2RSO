@@ -97,7 +97,16 @@ namespace D2RSO.Classes
         /// <param name="filePath">File path</param>
         public static SettingsClass Load(string filePath)
         {
-            return File.Exists(filePath) ? JsonConvert.DeserializeObject<SettingsClass>(File.ReadAllText(filePath)) : new SettingsClass();
+            try
+            {
+                return File.Exists(filePath)
+                    ? JsonConvert.DeserializeObject<SettingsClass>(File.ReadAllText(filePath))
+                    : new SettingsClass();
+            }
+            catch
+            {
+                return new SettingsClass();
+            }
         }
 
         /// <summary>

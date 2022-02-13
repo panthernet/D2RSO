@@ -47,7 +47,7 @@ namespace D2RSO.Classes.Data
         /// <summary>
         /// Stores key to activate skill in game
         /// </summary>
-        public string SkillKey { get; set; } = App.Data.AvailableKeys.FirstOrDefault(a => a == "MOUSE2");
+        public DataClass.KeyEntry SkillKey { get; set; } = App.Data.AvailableKeys.FirstOrDefault(a => a.Code == "MOUSE2");
 
         /// <summary>
         /// Process use skill key press
