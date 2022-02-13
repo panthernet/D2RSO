@@ -22,6 +22,11 @@ namespace D2RSO.Classes.Data
         public int Id { get; set; }
 
         /// <summary>
+        /// Profile id for this skill item
+        /// </summary>
+        public int ProfileId { get; set; }
+
+        /// <summary>
         /// File path for the image icon
         /// </summary>
         public string IconFileName
@@ -43,7 +48,7 @@ namespace D2RSO.Classes.Data
         /// <summary>
         /// Stores key to select skill in game
         /// </summary>
-        public string SelectKey { get; set; }
+        public DataClass.KeyEntry SelectKey { get; set; }
         /// <summary>
         /// Stores key to activate skill in game
         /// </summary>
@@ -55,7 +60,7 @@ namespace D2RSO.Classes.Data
         public bool SkillKeyPressed()
         {
             //initial state with no select key
-            if (_state == 0 && string.IsNullOrEmpty(SelectKey))
+            if (_state == 0 && SelectKey == null)
                 return true;
             //already pressed select
             if (_state == 1)

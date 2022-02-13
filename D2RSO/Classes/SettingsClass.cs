@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using D2RSO.Classes.Data;
 using Newtonsoft.Json;
@@ -37,9 +38,19 @@ namespace D2RSO.Classes
         }
 
         /// <summary>
+        /// Last selected profile Id to load profile when the app starts
+        /// </summary>
+        public int LastSelectedProfileId { get; set; }
+
+        /// <summary>
         /// Skills data collection
         /// </summary>
         public ObservableCollection<SkillDataItem> SkillItems { get; set; } = new();
+
+        /// <summary>
+        /// Skill profiles collection
+        /// </summary>
+        public ObservableCollection<TrackerProfile> Profiles { get; set; } = new();
 
         /// <summary>
         /// Tracker window X position coordinate
@@ -97,16 +108,21 @@ namespace D2RSO.Classes
         /// <param name="filePath">File path</param>
         public static SettingsClass Load(string filePath)
         {
+            SettingsClass result;
             try
             {
-                return File.Exists(filePath)
+                result = File.Exists(filePath)
                     ? JsonConvert.DeserializeObject<SettingsClass>(File.ReadAllText(filePath))
                     : new SettingsClass();
             }
             catch
             {
-                return new SettingsClass();
+                result = new SettingsClass();
             }
+
+            if (!result.Profiles.Any()) result.Profiles.Add(new TrackerProfile {Id = 0, Name = "Default"});
+
+            return result;
         }
 
         /// <summary>

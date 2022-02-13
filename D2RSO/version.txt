@@ -1,4 +1,8 @@
-﻿V1.0.2
+﻿V1.0.3
++ Added skill profiles
++ Fixed select key values
+
+V1.0.2
 + Added option to start tracking on app launch
 + Added experimental GamePad support
 + Limited app to one instance

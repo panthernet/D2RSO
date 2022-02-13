@@ -20,6 +20,8 @@ namespace D2RSO.Classes
             public string Name { get; set; }
             public string Code { get; set; }
 
+            public KeyEntry() {}
+
             public KeyEntry(string key)
             {
                 Name = Code = key;

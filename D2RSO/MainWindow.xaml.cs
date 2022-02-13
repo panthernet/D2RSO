@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using D2RSO.Classes;
 using D2RSO.Classes.Data;
 using D2RSO.Controls;
@@ -44,6 +48,19 @@ namespace D2RSO
         }
 
         public ICommand PlayCommand { get; set; }
+        public ICommand AddSkillCommand { get; set; }
+        public ICommand AddProfileCommand { get; set; }
+        public ICommand RemoveProfileCommand { get; set; }
+
+        public TrackerProfile Profile
+        {
+            get => _profile;
+            set { _profile = value;
+                OnProfileSelectionChanged(); OnPropertyChanged(); }
+        }
+
+        public ObservableCollection<SkillDataItem> SelectedSkillItems { get; set; } = new();
+        private TrackerProfile _profile;
 
         #endregion
 
@@ -52,18 +69,63 @@ namespace D2RSO
             InitializeComponent();
             DataContext = this;
 
-            Title = $"D2R Skill Overlay V1.0.2";
+            Title = $"D2R Skill Overlay V1.0.3";
 
             IsMaxRestoreButtonEnabled = false;
             IsMinButtonEnabled = true;
-            TrackerSlider.Value = App.Settings.FormScaleX * 10;
+//            TrackerSlider.Value = App.Settings.FormScaleX * 10;
 
             PlayCommand = new ActionCommand(PlayCommandExecuted);
-            Loaded += (sender, args) =>
+            AddSkillCommand = new SimpleCommand(_ => Profile != null, AddSkillButton);
+            AddProfileCommand = new SimpleCommand(_ => IsNotPlaying, AddProfileButton);
+            RemoveProfileCommand = new SimpleCommand(_ => IsNotPlaying, RemoveProfileButtonClick);
+
+            Profile = App.Settings.Profiles.FirstOrDefault(a => a.Id == App.Settings.LastSelectedProfileId) ?? App.Settings.Profiles.FirstOrDefault();
+
+            Loaded += (_, _) =>
             {
                 if(App.Settings.StartTrackerOnAppRun)
                     PlayCommandExecuted();
             };
+        }
+
+        private void RemoveProfileButtonClick(object obj)
+        {
+            this.Dispatcher.Invoke(async () =>
+            {
+                var result = await this.ShowMessageAsync("Confirmation",
+                    "Delete selected profile with all related skills?",
+                    MessageDialogStyle.AffirmativeAndNegative);
+                if (result != MessageDialogResult.Affirmative)
+                    return;
+
+                SelectedSkillItems.Clear();
+                var items = App.Settings.SkillItems.Where(a => a.ProfileId == Profile.Id).ToList();
+                foreach (var item in items)
+                    App.Settings.SkillItems.Remove(item);
+
+                App.Settings.Profiles.Remove(Profile);
+                Profile = App.Settings.Profiles.FirstOrDefault();
+                App.Settings.Save();
+            });
+        }
+
+        private void AddProfileButton(object obj)
+        {
+            this.Dispatcher.Invoke(async () =>
+            {
+                var result = await this.ShowInputAsync("Add new profile", "Enter name",
+                    new MetroDialogSettings {AffirmativeButtonText = "Add"});
+                if(result == null)
+                    return;
+
+                var id = App.Settings.Profiles.Any( )? App.Settings.Profiles.Max(a => a.Id) + 1 : 0;
+                var item = new TrackerProfile {Id = id, Name = result};
+                App.Settings.Profiles.Add(item);
+                Profile = item;
+                App.Settings.Save();
+
+            });
         }
 
         #region Input tracking
@@ -100,7 +162,7 @@ namespace D2RSO
                 else
                     loggedKey = e.KeyboardData.Key.ToString();
 
-                var result = App.Settings.SkillItems.Where(a => a.IsEnabled && a.SkillKey != null && a.SkillKey.Code.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
+                var result = SelectedSkillItems.Where(a => a.IsEnabled && a.SkillKey != null && a.SkillKey.Code.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
                 if (result.Any())
                 {
                     //signal skill key pressed
@@ -115,7 +177,7 @@ namespace D2RSO
                     }
                 }
 
-                result = App.Settings.SkillItems.Where(a => a.IsEnabled && a.SelectKey != null && a.SelectKey.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
+                result = SelectedSkillItems.Where(a => a.IsEnabled && a.SelectKey != null && a.SelectKey.Code.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
                 if (result.Any())
                 {
                     //select key pressed
@@ -126,7 +188,7 @@ namespace D2RSO
                     }
                 }
 
-                var except = App.Settings.SkillItems.Except(usedItems).ToList();
+                var except = SelectedSkillItems.Except(usedItems).ToList();
                 except.ForEach(a=> a.ResetKeys());
             }
         }
@@ -149,12 +211,6 @@ namespace D2RSO
             Hide();
         }
 
-        private void Scaler_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            App.Settings.FormScaleX = e.NewValue / 10;
-            App.Settings.FormScaleY = e.NewValue / 10;
-        }
-
         /// <summary>
         /// Create tracker window
         /// </summary>
@@ -167,19 +223,22 @@ namespace D2RSO
             CounterWindow.Show();
         }
 
-        private void AddSkillButton_OnClick(object sender, RoutedEventArgs e)
+        private void AddSkillButton(object obj)
         {
             //add new skill to the list
             var id = App.Settings.SkillItems.Any() ? App.Settings.SkillItems.Max(a => a.Id) + 1 : 1;
-            var item = new SkillDataItem { IconFileName = App.Data.Skillicons.FirstOrDefault().Key, Id = id };
+            var item = new SkillDataItem { IconFileName = App.Data.Skillicons.FirstOrDefault().Key, Id = id, ProfileId = Profile.Id};
             App.Settings.SkillItems.Add(item);
+            SelectedSkillItems.Add(item);
             App.Settings.Save();
         }
 
         private void RemSkillButton_OnClick(object sender, RoutedEventArgs e)
         {
             //remove skill
-            App.Settings.SkillItems.Remove((SkillDataItem)((Button)sender).CommandParameter);
+            var item = (SkillDataItem) ((Button) sender).CommandParameter;
+            App.Settings.SkillItems.Remove(item);
+            SelectedSkillItems.Remove(item);
             App.Settings.Save();
         }
 
@@ -258,9 +317,26 @@ namespace D2RSO
             {
                 Content = dlg
             };
-            dlg.CloseButton.Click += async (o, args) => await this.HideMetroDialogAsync(dialog);
+            dlg.CloseButton.Click += async (_, _) => await this.HideMetroDialogAsync(dialog);
 
             await this.ShowMetroDialogAsync(dialog);
+        }
+
+        private void OnProfileSelectionChanged()
+        {
+            if (Profile != null)
+            {
+                App.Settings.LastSelectedProfileId = Profile.Id;
+                App.Settings.Save();
+
+                SelectedSkillItems.Clear();
+                foreach (var item in App.Settings.SkillItems.Where(a => a.ProfileId == Profile.Id))
+                {
+                    SelectedSkillItems.Add(item);
+                }
+
+            }
+            else SelectedSkillItems.Clear();
         }
     }
 }
