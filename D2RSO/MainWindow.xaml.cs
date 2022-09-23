@@ -69,7 +69,7 @@ namespace D2RSO
             InitializeComponent();
             DataContext = this;
 
-            Title = $"D2R Skill Overlay V1.0.3";
+            Title = $"D2R Skill Overlay V1.0.4";
 
             IsMaxRestoreButtonEnabled = false;
             IsMinButtonEnabled = true;
@@ -157,7 +157,30 @@ namespace D2RSO
                 {
                     if(!string.IsNullOrEmpty(e.KeyboardData.Code))
                         loggedKey = e.KeyboardData.Code;
-                    else loggedKey = e.KeyboardData.Flags == 0 ? "MOUSE1" : "MOUSE2";
+                    else
+                    {
+                        switch (e.KeyboardData.Flags)
+                        {
+                            case 0:
+                                loggedKey = "MOUSE1";
+                                break;
+                            case 1:
+                                loggedKey = "MOUSE2";
+                                break;
+                            case 2:
+                                loggedKey = "MOUSE3";
+                                break;
+                            case 3:
+                                loggedKey = "MOUSEX1";
+                                break;
+                            case 4:
+                                loggedKey = "MOUSEX2";
+                                break;
+                            default: 
+                                loggedKey = "UNKNOWN";
+                                break;
+                        }
+                    }
                 }
                 else
                     loggedKey = e.KeyboardData.Key.ToString();

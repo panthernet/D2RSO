@@ -1,4 +1,7 @@
-﻿V1.0.3
+﻿V1.0.4
++ Support additional mouse buttons
+
+V1.0.3
 + Added skill profiles
 + Fixed select key values
 

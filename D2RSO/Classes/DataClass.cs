@@ -34,7 +34,7 @@ namespace D2RSO.Classes
             }
         }
 
-        private const string KEYS = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,Comma|OemComma,~|OemTilde,[|OemOpenBrackets,]|OemCloseBrackets,:|OemSemicolon,'|OemQuotes,1|D1,2|D2,3|D3,4|D4,5|D5,6|D6,7|D7,8|D8,9|D9,0|D0,+|Add,-|Subtract,Esc|Escape,Enter,Return,Left Shift|LShiftKey,Right Shift|RShiftKey,Left Alt|LMenu,Right Alt|RMenu,Left Control|LControlKey,Right Control|RControlKey,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,NumPad0,NumPad1,NumPad2,NumPad3,NumPad4,NumPad5,NumPad6,NumPad7,NumPad8,NumPad9,Tab,Back,MOUSE1,MOUSE2,GamePad Button 0|Buttons0,GamePad Button 1|Buttons1,GamePad Button 2|Buttons2,GamePad Button 3|Buttons3,GamePad Button 4|Buttons4,GamePad Button 5|Buttons5,GamePad Button 6|Buttons6,GamePad Button 7|Buttons7,GamePad Button 8|Buttons8,GamePad Button 9|Buttons9";
+        private const string KEYS = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,Comma|OemComma,~|OemTilde,[|OemOpenBrackets,]|OemCloseBrackets,:|OemSemicolon,'|OemQuotes,1|D1,2|D2,3|D3,4|D4,5|D5,6|D6,7|D7,8|D8,9|D9,0|D0,+|Add,-|Subtract,Esc|Escape,Enter,Return,Left Shift|LShiftKey,Right Shift|RShiftKey,Left Alt|LMenu,Right Alt|RMenu,Left Control|LControlKey,Right Control|RControlKey,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,NumPad0,NumPad1,NumPad2,NumPad3,NumPad4,NumPad5,NumPad6,NumPad7,NumPad8,NumPad9,Tab,Back,MOUSE1,MOUSE2,MOUSE3,MOUSEX1,MOUSEX2,GamePad Button 0|Buttons0,GamePad Button 1|Buttons1,GamePad Button 2|Buttons2,GamePad Button 3|Buttons3,GamePad Button 4|Buttons4,GamePad Button 5|Buttons5,GamePad Button 6|Buttons6,GamePad Button 7|Buttons7,GamePad Button 8|Buttons8,GamePad Button 9|Buttons9";
 
         /// <summary>
         /// Load all images for faster access

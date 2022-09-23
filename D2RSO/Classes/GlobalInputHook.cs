@@ -190,7 +190,49 @@ namespace D2RSO.Classes
             WM_MOUSEMOVE = 0x0200,
             WM_MOUSEWHEEL = 0x020A,
             WM_RBUTTONDOWN = 0x0204,
-            WM_RBUTTONUP = 0x0205
+            WM_RBUTTONUP = 0x0205,
+
+            WM_BTN3 = 0x000000000000020b,
+            WM_BTN_MID = 0x0000000000000207,
+
+        }
+
+        [Flags()]
+        public enum RawMouseButtons : ushort
+        {
+            None = 0,
+            LeftDown = 0x0001,
+            LeftUp = 0x0002,
+            RightDown = 0x0004,
+            RightUp = 0x0008,
+            MiddleDown = 0x0010,
+            MiddleUp = 0x0020,
+            Button4Down = 0x0040,
+            Button4Up = 0x0080,
+            Button5Down = 0x0100,
+            Button5Up = 0x0200,
+            MouseWheel = 0x0400
+        }
+
+        [Flags()]
+        public enum RawMouseFlags : ushort
+        {
+            MOVE_RELATIVE = 0,
+            MOVE_ABSOLUTE = 1,
+            VIRTUAL_DESKTOP = 2,
+            ATTRIBUTES_CHANGED = 4
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RawInputMouse
+        {
+            public RawMouseFlags flags;
+            public ushort buttonData;
+            public RawMouseButtons buttonflags;
+            public uint rawButtons;
+            public int lastX;
+            public int lastY;
+            public uint extraInformation;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -281,21 +323,49 @@ namespace D2RSO.Classes
             return fEatKeyStroke ? (IntPtr)1 : CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
         }
 
+        private const int EXTRA_INFO = 1000;
+
+        IntPtr extraInfoPointer = new IntPtr(EXTRA_INFO);
 
         public IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
             bool fEatKeyStroke = false;
-
-            if (MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
+            var value = (MouseMessages)wParam;
+            if (nCode >= 0)
             {
-                Action<int> handler = MouseButtonPressed;
-                handler?.Invoke(0);
-            } 
-            else if (MouseMessages.WM_RBUTTONDOWN == (MouseMessages)wParam)
-            {
-                Action<int> handler = MouseButtonPressed;
-                handler?.Invoke(1);
+                MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
 
+                if (MouseMessages.WM_MOUSEMOVE != value)
+                {
+
+                    if (MouseMessages.WM_LBUTTONDOWN == value)
+                    {
+                        Action<int> handler = MouseButtonPressed;
+                        handler?.Invoke(0);
+                    }
+                    else if (MouseMessages.WM_RBUTTONDOWN == value)
+                    {
+                        Action<int> handler = MouseButtonPressed;
+                        handler?.Invoke(1);
+
+                    }
+                    else if (MouseMessages.WM_BTN_MID == value)
+                    {
+                        Action<int> handler = MouseButtonPressed;
+                        handler?.Invoke(2);
+
+                    }
+                    else if (hookStruct.mouseData == 131072)
+                    {
+                        Action<int> handler = MouseButtonPressed;
+                        handler?.Invoke(3);
+                    }
+                    else if (hookStruct.mouseData == 65536)
+                    {
+                        Action<int> handler = MouseButtonPressed;
+                        handler?.Invoke(4);
+                    }
+                }
             }
 
             return fEatKeyStroke ? (IntPtr)1 : CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
