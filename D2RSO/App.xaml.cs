@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using ControlzEx.Theming;
@@ -43,6 +44,7 @@ namespace D2RSO
 
             _logsFilePath = Path.Combine(_folderPath, "log.txt");
             Logger.Initialize(_logsFilePath);
+            DispatcherUnhandledException += (sender, args) => Logger.Log(args.Exception);
 
             try
             {
@@ -56,6 +58,15 @@ namespace D2RSO
 
             Data.Load();
             Settings = SettingsClass.Load(_settingsFilePath);
+
+            foreach (var item in Settings.SkillItems)
+            {
+                if (item.SelectKey != null)
+                    item.SelectKey = Data.AvailableKeys.FirstOrDefault(a => a.Code == item.SelectKey.Code);
+                if(item.SkillKey != null)
+                    item.SkillKey = Data.AvailableKeys.FirstOrDefault(a => a.Code == item.SkillKey.Code);
+            }
+
             Settings.UpdatePath(_settingsFilePath);
         }
     }

@@ -16,6 +16,7 @@ using D2RSO.Classes.Data;
 using D2RSO.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Xaml.Behaviors.Core;
+using SharpDX.DirectInput;
 using Button = System.Windows.Controls.Button;
 
 namespace D2RSO
@@ -69,7 +70,7 @@ namespace D2RSO
             InitializeComponent();
             DataContext = this;
 
-            Title = $"D2R Skill Overlay V1.0.4";
+            Title = $"D2R Skill Overlay V1.0.5";
 
             IsMaxRestoreButtonEnabled = false;
             IsMinButtonEnabled = true;
@@ -140,7 +141,7 @@ namespace D2RSO
                 new GlobalKeyboardHookEventArgs(new GlobalInputHook.LowLevelKeyboardInputEvent { Flags = value },
                     GlobalInputHook.KeyboardState.KeyDown));
             _globalInputHook.GamePadButtonPressed += button => OnHookKeyPressed(null,
-                new GlobalKeyboardHookEventArgs(new GlobalInputHook.LowLevelKeyboardInputEvent() {Code = button},
+                new GlobalKeyboardHookEventArgs(new GlobalInputHook.LowLevelKeyboardInputEvent() {HardwareScanCode = 666, Flags = button},
                     GlobalInputHook.KeyboardState.KeyDown));
 
             CreateCounterWindow(false);
@@ -148,71 +149,83 @@ namespace D2RSO
 
         private void OnHookKeyPressed(object? sender, GlobalKeyboardHookEventArgs e)
         {
-            if (e.KeyboardState == GlobalInputHook.KeyboardState.KeyDown)
+            try
             {
-                var usedItems = new List<SkillDataItem>();
-                // Now you can access both, the key and virtual code
-                string loggedKey;
-                if (sender == null)
+                if (e.KeyboardState == GlobalInputHook.KeyboardState.KeyDown)
                 {
-                    if(!string.IsNullOrEmpty(e.KeyboardData.Code))
-                        loggedKey = e.KeyboardData.Code;
+                    var usedItems = new List<SkillDataItem>();
+                    // Now you can access both, the key and virtual code
+                    string loggedKey;
+                    if (sender == null)
+                    {
+                        if (e.KeyboardData.HardwareScanCode == 666) //gamepad
+                            loggedKey = ((JoystickOffset)e.KeyboardData.Flags).ToString();
+                        else
+                        {
+                            switch (e.KeyboardData.Flags)
+                            {
+                                case 0:
+                                    loggedKey = "MOUSE1";
+                                    break;
+                                case 1:
+                                    loggedKey = "MOUSE2";
+                                    break;
+                                case 2:
+                                    loggedKey = "MOUSE3";
+                                    break;
+                                case 3:
+                                    loggedKey = "MOUSEX1";
+                                    break;
+                                case 4:
+                                    loggedKey = "MOUSEX2";
+                                    break;
+                                default:
+                                    loggedKey = "UNKNOWN";
+                                    break;
+                            }
+                        }
+                    }
                     else
+                        loggedKey = e.KeyboardData.Key.ToString();
+
+                    var result = SelectedSkillItems.Where(a =>
+                        a.IsEnabled && a.SkillKey != null &&
+                        a.SkillKey.Code.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
+                    if (result.Any())
                     {
-                        switch (e.KeyboardData.Flags)
+                        //signal skill key pressed
+                        foreach (var item in result)
                         {
-                            case 0:
-                                loggedKey = "MOUSE1";
-                                break;
-                            case 1:
-                                loggedKey = "MOUSE2";
-                                break;
-                            case 2:
-                                loggedKey = "MOUSE3";
-                                break;
-                            case 3:
-                                loggedKey = "MOUSEX1";
-                                break;
-                            case 4:
-                                loggedKey = "MOUSEX2";
-                                break;
-                            default: 
-                                loggedKey = "UNKNOWN";
-                                break;
+                            usedItems.Add(item);
+                            if (item.SkillKeyPressed())
+                            {
+                                //do fire timer
+                                CounterWindow.AddTrackerItem(item);
+                            }
                         }
                     }
-                }
-                else
-                    loggedKey = e.KeyboardData.Key.ToString();
 
-                var result = SelectedSkillItems.Where(a => a.IsEnabled && a.SkillKey != null && a.SkillKey.Code.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
-                if (result.Any())
-                {
-                    //signal skill key pressed
-                    foreach (var item in result)
+                    result = SelectedSkillItems.Where(a =>
+                        a.IsEnabled && a.SelectKey != null &&
+                        a.SelectKey.Code.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
+                    if (result.Any())
                     {
-                        usedItems.Add(item);
-                        if (item.SkillKeyPressed())
+                        //select key pressed
+                        foreach (var item in result)
                         {
-                            //do fire timer
-                            CounterWindow.AddTrackerItem(item);
+                            usedItems.Add(item);
+                            item.SelectKeyPressed();
                         }
                     }
-                }
 
-                result = SelectedSkillItems.Where(a => a.IsEnabled && a.SelectKey != null && a.SelectKey.Code.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
-                if (result.Any())
-                {
-                    //select key pressed
-                    foreach (var item in result)
-                    {
-                        usedItems.Add(item);
-                        item.SelectKeyPressed();
-                    }
+                    var except = SelectedSkillItems.Except(usedItems).ToList();
+                    except.ForEach(a => a.ResetKeys());
                 }
-
-                var except = SelectedSkillItems.Except(usedItems).ToList();
-                except.ForEach(a=> a.ResetKeys());
+            }
+            catch(Exception ex)
+            {
+                Logger.Log($"{e.KeyboardState} {e.KeyboardData.Flags} {e.KeyboardData.Key} {e.KeyboardData.HardwareScanCode}");
+                Logger.Log(ex);
             }
         }
 

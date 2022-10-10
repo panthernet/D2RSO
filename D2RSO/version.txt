@@ -1,4 +1,8 @@
-﻿V1.0.4
+﻿V1.0.5
++ Fixed controls hook crashes
++ Fixed skill buttons display after loading previously saved config
+
+V1.0.4
 + Support additional mouse buttons
 
 V1.0.3

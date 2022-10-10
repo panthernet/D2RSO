@@ -25,7 +25,7 @@ namespace D2RSO.Classes
         /// pressed = 1
         /// unpressed = 0;
         /// </param>
-        public delegate void newGamePadButtonInfoAcquiredEventHandler(object sender, string btn, bool pressed);
+        public delegate void newGamePadButtonInfoAcquiredEventHandler(object sender, int btn, bool pressed);
 
         public event newGamePadButtonInfoAcquiredEventHandler evNewGamePadButtonInfoAcquired;
 
@@ -91,11 +91,11 @@ namespace D2RSO.Classes
                     {
                         if (state.Value == 0)
                         {
-                            temp(this, state.Offset.ToString(), false);
+                            temp(this, state.RawOffset, false);
                         }
                         else
                         {
-                            temp(this, state.Offset.ToString(), true);
+                            temp(this, state.RawOffset, true);
                         }
                     }
                 }

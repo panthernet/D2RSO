@@ -183,7 +183,7 @@
 										<RowDefinition Height="Auto"/>
 									</Grid.RowDefinitions>
 									<Label Content="Select Key" Margin="5"/>
-									<ComboBox Grid.Row="1" SelectedItem="{Binding SelectKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding Source={x:Static local:App.Data}, Path=AvailableKeys}" DisplayMemberPath="Name" SelectedValuePath="Code" />
+									<ComboBox Grid.Row="1" SelectedItem="{Binding SelectKey, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Source={x:Static local:App.Data}, Path=AvailableKeys}" DisplayMemberPath="Name" SelectedValuePath="Code" />
 								</Grid>
 								<Grid>
 									<Grid.RowDefinitions>
@@ -191,7 +191,7 @@
 										<RowDefinition Height="Auto"/>
 									</Grid.RowDefinitions>
 									<Label Content="Skill Key" Margin="5"/>
-									<ComboBox Grid.Row="1" SelectedItem="{Binding SkillKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding Source={x:Static local:App.Data}, Path=AvailableKeys}" DisplayMemberPath="Name" SelectedValuePath="Code" />
+									<ComboBox Grid.Row="1" SelectedItem="{Binding SkillKey, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Source={x:Static local:App.Data}, Path=AvailableKeys}" DisplayMemberPath="Name" SelectedValuePath="Code" />
 								</Grid>
 
 							</StackPanel>

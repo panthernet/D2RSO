@@ -27,7 +27,7 @@ namespace D2RSO.Classes
     {
         public event EventHandler<GlobalKeyboardHookEventArgs> KeyboardPressed;
         public event Action<int> MouseButtonPressed;
-        public event Action<string> GamePadButtonPressed;
+        public event Action<int> GamePadButtonPressed;
 
         // EDT: Added an optional parameter (registeredKeys) that accepts keys to restict
         // the logging mechanism.
@@ -268,8 +268,6 @@ namespace D2RSO.Classes
             /// Additional information associated with the message. 
             /// </summary>
             public IntPtr AdditionalInformation;
-
-            public string Code;
         }
 
         public const int WH_KEYBOARD_LL = 13;
@@ -292,20 +290,20 @@ namespace D2RSO.Classes
 
         public IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            bool fEatKeyStroke = false;
-            try
+            if (nCode >= 0 && wParam == (IntPtr)KeyboardState.KeyDown)
             {
-                var wparamTyped = wParam.ToInt32();
-                if (Enum.IsDefined(typeof(KeyboardState), wparamTyped))
+                bool fEatKeyStroke = false;
+                try
                 {
+                    var wparamTyped = wParam.ToInt32();
+
                     object o = Marshal.PtrToStructure(lParam, typeof(LowLevelKeyboardInputEvent));
-                    LowLevelKeyboardInputEvent p = (LowLevelKeyboardInputEvent) o;
-                    p.Code = null;
-                    var eventArguments = new GlobalKeyboardHookEventArgs(p, (KeyboardState) wparamTyped);
+                    LowLevelKeyboardInputEvent p = (LowLevelKeyboardInputEvent)o;
+                    var eventArguments = new GlobalKeyboardHookEventArgs(p, (KeyboardState)wparamTyped);
                     // EDT: Removed the comparison-logic from the usage-area so the user does not need to mess around with it.
                     // Either the incoming key has to be part of RegisteredKeys (see constructor on top) or RegisterdKeys
                     // has to be null for the event to get fired.
-                    var key = (Keys) p.VirtualCode;
+                    var key = (Keys)p.VirtualCode;
                     if (RegisteredKeys == null || RegisteredKeys.Contains(key))
                     {
                         EventHandler<GlobalKeyboardHookEventArgs> handler = KeyboardPressed;
@@ -313,14 +311,17 @@ namespace D2RSO.Classes
 
                         fEatKeyStroke = eventArguments.Handled;
                     }
+
                 }
-            }
-            catch
-            {
-                // ignore
+                catch
+                {
+                    // ignore
+                }
+
+                //return fEatKeyStroke ? (IntPtr)1 : CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
             }
 
-            return fEatKeyStroke ? (IntPtr)1 : CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+            return CallNextHookEx(_windowsHookHandle, nCode, wParam, lParam);
         }
 
         private const int EXTRA_INFO = 1000;
@@ -330,45 +331,54 @@ namespace D2RSO.Classes
         public IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
             bool fEatKeyStroke = false;
-            var value = (MouseMessages)wParam;
-            if (nCode >= 0)
+            try
             {
-                MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
-
-                if (MouseMessages.WM_MOUSEMOVE != value)
+                var value = (MouseMessages)wParam;
+                if (nCode >= 0)
                 {
+                    MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
 
-                    if (MouseMessages.WM_LBUTTONDOWN == value)
+                    if (MouseMessages.WM_MOUSEMOVE != value)
                     {
-                        Action<int> handler = MouseButtonPressed;
-                        handler?.Invoke(0);
-                    }
-                    else if (MouseMessages.WM_RBUTTONDOWN == value)
-                    {
-                        Action<int> handler = MouseButtonPressed;
-                        handler?.Invoke(1);
 
-                    }
-                    else if (MouseMessages.WM_BTN_MID == value)
-                    {
-                        Action<int> handler = MouseButtonPressed;
-                        handler?.Invoke(2);
+                        if (MouseMessages.WM_LBUTTONDOWN == value)
+                        {
+                            Action<int> handler = MouseButtonPressed;
+                            handler?.Invoke(0);
+                        }
+                        else if (MouseMessages.WM_RBUTTONDOWN == value)
+                        {
+                            Action<int> handler = MouseButtonPressed;
+                            handler?.Invoke(1);
 
-                    }
-                    else if (hookStruct.mouseData == 131072)
-                    {
-                        Action<int> handler = MouseButtonPressed;
-                        handler?.Invoke(3);
-                    }
-                    else if (hookStruct.mouseData == 65536)
-                    {
-                        Action<int> handler = MouseButtonPressed;
-                        handler?.Invoke(4);
+                        }
+                        else if (MouseMessages.WM_BTN_MID == value)
+                        {
+                            Action<int> handler = MouseButtonPressed;
+                            handler?.Invoke(2);
+
+                        }
+                        else if (hookStruct.mouseData == 131072)
+                        {
+                            Action<int> handler = MouseButtonPressed;
+                            handler?.Invoke(3);
+                        }
+                        else if (hookStruct.mouseData == 65536)
+                        {
+                            Action<int> handler = MouseButtonPressed;
+                            handler?.Invoke(4);
+                        }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+            }
 
-            return fEatKeyStroke ? (IntPtr)1 : CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+            //return fEatKeyStroke ? (IntPtr)1 : CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+            return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
+
         }
     }
 }
