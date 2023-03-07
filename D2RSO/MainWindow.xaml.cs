@@ -206,7 +206,8 @@ namespace D2RSO
                     }
 
                     result = SelectedSkillItems.Where(a =>
-                        a.IsEnabled && a.SelectKey != null &&
+                        a.IsEnabled && a.SelectKey != null && 
+                        a.SelectKey.Code != null &&
                         a.SelectKey.Code.Equals(loggedKey, StringComparison.OrdinalIgnoreCase)).ToList();
                     if (result.Any())
                     {

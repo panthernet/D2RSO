@@ -60,7 +60,7 @@ namespace D2RSO.Classes.Data
         public bool SkillKeyPressed()
         {
             //initial state with no select key
-            if (_state == 0 && SelectKey == null)
+            if (_state == 0 && SelectKey.Code == null)
                 return true;
             //already pressed select
             if (_state == 1)
